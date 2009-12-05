@@ -1,0 +1,4 @@
+Simple script to fetch today's album releases and send them via email
+it currently only works with gmail addresses
+
+usage: python notifier.py [gmail address] [password]

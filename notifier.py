@@ -3,27 +3,31 @@ import os
 import sys
 import datetime
 import time
-import feedparser
+import urllib
+from BeautifulSoup import BeautifulSoup
 from gsendmail import GSendMail
 
 
 class AbsolutePunkFeed(object):
-    url = "http://www.absolutepunk.net/releasefeed.php"
+    url = "http://www.absolutepunk.net/releasedates.php"
     def __init__(self):
         pass
 
     def _parse_date(self, date_str):
         #Release Date: Mon, 06 Apr 2009
-        ds = date_str.split(",")[1].strip()
-        d = time.strptime(ds, "%d %b %Y")
+        #10-01-12&c=3
+        ds = date_str.split("&")[0].strip()
+        d = time.strptime(ds, "%y-%m-%d")
         return datetime.date(d.tm_year, d.tm_mon, d.tm_mday)
 
     def get_events(self):
         entries = []
-        d = feedparser.parse(self.url)
-        for entry in d.entries:
-            date = self._parse_date(entry.description)
-            entries.append([entry.title, date])
+        html = urllib.urlopen(self.url).read()
+        soup = BeautifulSoup(html)
+        releases = soup.findAll("td", { "class": "big" })[2:]
+        for entry in releases:
+            date = self._parse_date(entry.find("div", { 'class': 'time' }).find("a")['href'].split("day=")[1])
+            entries.append([entry.find("b").text, date])
         return entries
 
 def main(args):

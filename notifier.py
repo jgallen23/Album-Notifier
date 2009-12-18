@@ -27,7 +27,8 @@ class AbsolutePunkFeed(object):
         releases = soup.findAll("td", { "class": "big" })[2:]
         for entry in releases:
             date = self._parse_date(entry.find("div", { 'class': 'time' }).find("a")['href'].split("day=")[1])
-            entries.append([entry.find("b").text, date])
+            entries.append([entry.find("b").string, date])
+        print entries
         return entries
 
 def main(args):
@@ -47,7 +48,7 @@ def main(args):
             msg.append(entry)
         html = '<br/>'.join(msg)
         g = GSendMail(args[0], args[1]) #pass in
-        g.send_html(args[0], 'Album Releases', 'Album Releases Today', html)
+        g.send_html(args[0], 'Album Releases Today', html)
 
 if __name__ == "__main__": main(sys.argv[1:])
 

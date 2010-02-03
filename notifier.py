@@ -24,7 +24,7 @@ class AbsolutePunkFeed(object):
         entries = []
         html = urllib.urlopen(self.url).read()
         soup = BeautifulSoup(html)
-        releases = soup.findAll("td", { "class": "big" })[2:]
+        releases = soup.findAll("td", { "class": "big" })[3:]
         for entry in releases:
             date = self._parse_date(entry.find("div", { 'class': 'time' }).find("a")['href'].split("day=")[1])
             entries.append([entry.find("b").string, date])
